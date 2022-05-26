@@ -1,0 +1,18 @@
+## Here we validate the current PR is already in another branch
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-lineage:
+    name: Check feature branch is merged into test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check that this commit is merged into test
+        run: if git merge-base --is-ancestor refs/remotes/origin/${{ github.head_ref }} refs/remotes/origin/test; then echo "Test branch is up to date with branch ${{ github.head_ref }}"; else echo "Test branch is behind branch ${{ github.head_ref }}" && exit 1;fi
